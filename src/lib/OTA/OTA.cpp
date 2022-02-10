@@ -25,7 +25,7 @@ static inline uint8_t ICACHE_RAM_ATTR HybridWideNonceToSwitchIndex(uint8_t const
     return ((nonce & 0b111) + ((nonce >> 3) & 0b1)) % 8;
 }
 
-#if TARGET_TX or defined UNIT_TEST
+#if TARGET_TX || defined(UNIT_TEST)
 
 // Current ChannelData generator function being used by TX
 PackChannelData_t PackChannelData;
@@ -37,11 +37,11 @@ static void ICACHE_RAM_ATTR PackChannelDataHybridCommon(OTA_Packet_s * const ota
     otaPktPtr->rc.ch0High = ((crsf->ChannelDataIn[0]) >> 3);
     otaPktPtr->rc.ch0Low  = crsf->ChannelDataIn[0] >> 1;
     otaPktPtr->rc.ch1High = ((crsf->ChannelDataIn[1]) >> 3);
-    otaPktPtr->rc.ch1Low  = crsf->ChannelDataIn[0] >> 1;
+    otaPktPtr->rc.ch1Low  = crsf->ChannelDataIn[1] >> 1;
     otaPktPtr->rc.ch2High = ((crsf->ChannelDataIn[2]) >> 3);
-    otaPktPtr->rc.ch2Low  = crsf->ChannelDataIn[0] >> 1;
+    otaPktPtr->rc.ch2Low  = crsf->ChannelDataIn[2] >> 1;
     otaPktPtr->rc.ch3High = ((crsf->ChannelDataIn[3]) >> 3);
-    otaPktPtr->rc.ch3Low  = crsf->ChannelDataIn[0] >> 1;
+    otaPktPtr->rc.ch3Low  = crsf->ChannelDataIn[3] >> 1;
 }
 
 /**
@@ -165,9 +165,10 @@ void ICACHE_RAM_ATTR GenerateChannelDataHybridWide(OTA_Packet_s * const otaPktPt
         // include the switch value
         value;
 }
+#endif
 
 
-#elif TARGET_RX or defined UNIT_TEST
+#if TARGET_RX || defined(UNIT_TEST)
 
 // Current ChannelData unpacker function being used by RX
 UnpackChannelData_t UnpackChannelData;
@@ -175,10 +176,10 @@ UnpackChannelData_t UnpackChannelData;
 static void ICACHE_RAM_ATTR UnpackChannelDataHybridCommon(OTA_Packet_s const * const otaPktPtr, CRSF * const crsf)
 {
     // The analog channels
-    crsf->PackedRCdataOut.ch0 = ((uint16_t)otaPktPtr->rc.ch0High << 3) + otaPktPtr->rc.ch0Low;
-    crsf->PackedRCdataOut.ch1 = ((uint16_t)otaPktPtr->rc.ch1High << 3) + otaPktPtr->rc.ch1Low;
-    crsf->PackedRCdataOut.ch2 = ((uint16_t)otaPktPtr->rc.ch2High << 3) + otaPktPtr->rc.ch2Low;
-    crsf->PackedRCdataOut.ch3 = ((uint16_t)otaPktPtr->rc.ch3High << 3) + otaPktPtr->rc.ch3Low;
+    crsf->PackedRCdataOut.ch0 = ((uint16_t)otaPktPtr->rc.ch0High << 3) + ((uint16_t)otaPktPtr->rc.ch0Low << 1);
+    crsf->PackedRCdataOut.ch1 = ((uint16_t)otaPktPtr->rc.ch1High << 3) + ((uint16_t)otaPktPtr->rc.ch1Low << 1);
+    crsf->PackedRCdataOut.ch2 = ((uint16_t)otaPktPtr->rc.ch2High << 3) + ((uint16_t)otaPktPtr->rc.ch2Low << 1);
+    crsf->PackedRCdataOut.ch3 = ((uint16_t)otaPktPtr->rc.ch3High << 3) + ((uint16_t)otaPktPtr->rc.ch3Low << 1);
 }
 
 /**

@@ -84,8 +84,9 @@ extern PackChannelData_t PackChannelData;
 #if defined(UNIT_TEST)
 void OtaSetHybrid8NextSwitchIndex(uint8_t idx);
 #endif
+#endif
 
-#elif defined(TARGET_RX) || defined(UNIT_TEST)
+#if defined(TARGET_RX) || defined(UNIT_TEST)
 typedef std::function<bool (OTA_Packet_s const * const otaPktPtr, CRSF * const crsf, uint8_t nonce, uint8_t tlmDenom)> UnpackChannelData_t;
 extern UnpackChannelData_t UnpackChannelData;
 #endif
